@@ -1,0 +1,31 @@
+=====================================================================
+Assignment: Lab 1
+OK, version v1.18.1
+=====================================================================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Running tests
+
+---------------------------------------------------------------------
+Doctests for add_in_range
+
+>>> add_in_range(3, 5)  # .Case 1
+12
+:D Test Case 1 passed
+---------------------------------------------------------------------
+
+>>> add_in_range(1, 10)  # .Case 2
+55
+:D Test Case 2 passed
+---------------------------------------------------------------------
+
+-- OK! --
+---------------------------------------------------------------------
+Test summary
+    1 test cases passed! No cases failed.
+
+Backup... 0.0% completeBackup... 100% complete
+[31mBackup past deadline by 1108 days, 14 hours, 44 minutes, and 59 seconds[0m
+[32mBackup successful for user: reouct@gmail.com[0m
+[32mURL: https://okpy.org/cal/cs61a/sp22/lab01/backups/MojEA5[0m
+
