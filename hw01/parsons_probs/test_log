@@ -1,0 +1,55 @@
+=====================================================================
+Assignment: Homework 1
+OK, version v1.18.1
+=====================================================================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Running tests
+
+---------------------------------------------------------------------
+Doctests for k_in_num
+
+>>> k_in_num(3, 123) # .Case 1
+DEBUG: 3
+True
+:D Test Case 1 passed
+---------------------------------------------------------------------
+
+>>> k_in_num(2, 123) # .Case 2
+DEBUG: 12
+False
+
+# Error: expected
+#     True
+# but got
+#     False
+:( Test Case 2 failed
+---------------------------------------------------------------------
+
+>>> k_in_num(5, 123) # .Case 3
+DEBUG: 12
+False
+:D Test Case 3 passed
+---------------------------------------------------------------------
+
+>>> k_in_num(0, 0) # .Case 4
+DEBUG: 0
+True
+
+# Error: expected
+#     False
+# but got
+#     True
+:( Test Case 4 failed
+---------------------------------------------------------------------
+
+
+---------------------------------------------------------------------
+Test summary
+    0 test cases passed before encountering first failed test case
+
+Backup... 0.0% completeBackup... 100% complete
+[31mBackup past deadline by 1107 days, 15 hours, 35 minutes, and 11 seconds[0m
+[32mBackup successful for user: reouct@gmail.com[0m
+[32mURL: https://okpy.org/cal/cs61a/sp22/hw01/backups/yM86W7[0m
+
