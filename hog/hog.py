@@ -22,7 +22,26 @@ def roll_dice(num_rolls, dice=six_sided):
     assert num_rolls > 0, 'Must roll at least once.'
     # BEGIN PROBLEM 1
     "*** YOUR CODE HERE ***"
+    score = 0
+    n = num_rolls
+    _exit = False
+
+    while n > 0:
+        dice_number = dice()
+
+        if not _exit:
+            if dice_number == 1:
+                score = 1
+                _exit = True
+            else:
+                score += dice_number
+        n -= 1
+
+    return score
+
     # END PROBLEM 1
+counted_dice = make_test_dice(4,1,2,6)
+roll_dice(3, counted_dice)
 
 
 def digit_fn(digit):
