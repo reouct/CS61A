@@ -40,7 +40,9 @@ test = {
             'make_test_dice(6)',
             'make_fair_dice(6)',
             'six_sided',
-            'six_sided()'
+            'six_sided()',
+            'six_sided(1)',
+            'six_sided(6)'
           ],
           'hidden': False,
           'locked': True,

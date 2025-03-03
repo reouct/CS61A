@@ -26,77 +26,58 @@ def take_turn(prev_rolls, move_history, goal, game_rules):
     fair_dice = dice.make_fair_dice(6)
     dice_results = []
 
-    hog_pile = game_rules["Hog Pile"]
+    sus_fuss = game_rules["Sus Fuss"]
+
+    def logged_dice():
+        if len(dice_results) < len(prev_rolls):
+            out = prev_rolls[len(dice_results)]
+        else:
+            out = fair_dice()
+        dice_results.append(out)
+        return out
+
+    final_scores = None
+    who = 0
+
+    move_cnt = 0
+
+    def strategy_for(player):
+        def strategy(*scores):
+            nonlocal final_scores, move_cnt, who
+            final_scores = scores
+            if player:
+                final_scores = final_scores[::-1]
+            who = player
+            if move_cnt == len(move_history):
+                raise HogLoggingException()
+            move = move_history[move_cnt]
+            move_cnt += 1
+            return move
+
+        return strategy
+
+    game_over = False
 
     try:
-        old_hog_pile = hog.hog_pile
-        if not hog_pile:
-            hog.hog_pile = lambda score0, score1: 0
-
-        def logged_dice():
-            if len(dice_results) < len(prev_rolls):
-                out = prev_rolls[len(dice_results)]
-            else:
-                out = fair_dice()
-            dice_results.append(out)
-            return out
-
-        final_scores = None
-        final_message = None
-        who = 0
-
-        commentary = hog.both(
-            hog.say_scores,
-            hog.announce_lead_changes,
-        )
-
-        def log(*logged_scores):
-            nonlocal final_message
-            leader, message = commentary(*logged_scores)
-            final_message = message
-            return leader, message
-
-        move_cnt = 0
-
-        def strategy_for(player):
-            def strategy(*scores):
-                nonlocal final_scores, move_cnt, who
-                final_scores = scores
-                if player:
-                    final_scores = final_scores[::-1]
-                who = player
-                if move_cnt == len(move_history):
-                    raise HogLoggingException()
-                move = move_history[move_cnt]
-                move_cnt += 1
-                return move
-
-            return strategy
-
-        game_over = False
-
-        try:
-            final_scores = trace_play(
-                hog.play,
-                strategy_for(0),
-                strategy_for(1),
-                0,
-                0,
-                dice=logged_dice,
-                say=log,
-                goal=goal,
-            )[:2]
-        except HogLoggingException:
-            pass
-        else:
-            game_over = True
-    finally:
-        hog.hog_pile = old_hog_pile
+        final_scores = trace_play(
+            hog.play,
+            strategy_for(0),
+            strategy_for(1),
+            hog.sus_update if sus_fuss else hog.simple_update,
+            0,
+            0,
+            dice=logged_dice,
+            goal=goal,
+        )[:2]
+    except HogLoggingException:
+        pass
+    else:
+        game_over = True
 
     return {
         "rolls": dice_results,
         "finalScores": final_scores,
-        "message": final_message,
+        "message": "",
         "gameOver": game_over,
         "who": who,
     }
@@ -105,28 +86,24 @@ def take_turn(prev_rolls, move_history, goal, game_rules):
 @route
 def strategy(name, scores):
     STRATEGIES = {
-        "hefty_hogs_strategy": hog.hefty_hogs_strategy,
-        "hog_pile_strategy": hog.hog_pile_strategy,
+        "boar_strategy": hog.boar_strategy,
+        "sus_strategy": hog.sus_strategy,
         "final_strategy": hog.final_strategy,
     }
     return STRATEGIES[name](*scores[::-1])
 
 
 @route("dice_graphic.svg")
-def draw_dice_graphic(num, no_default=False):
+def draw_dice_graphic(num):
     num = int(num[0])
     # Either draw student-provided dice or our default dice
-    try:
-        import design
-        if hasattr(design, "draw_dice") or no_default:
-            graphic = design.draw_dice(num)
-            return str(graphic)
-    except ModuleNotFoundError:
-        pass
+    if hasattr(hog, "draw_dice"):
+        graphic = hog.draw_dice(num)
+        return str(graphic)
     return default_graphics.dice[num]
 
 
-def trace_play(play, strategy0, strategy1, score0, score1, dice, goal, say):
+def trace_play(play, strategy0, strategy1, update, score0, score1, dice, goal):
     """Wraps the user's play function and
         (1) ensures that strategy0 and strategy1 are called exactly once per turn
         (2) records the entire game, returning the result as a list of dictionaries,
@@ -163,17 +140,15 @@ def trace_play(play, strategy0, strategy1, score0, score1, dice, goal, say):
         game_trace[-1]["dice_values"].append(roll)
         return roll
 
-    f = io.StringIO()
-    with redirect_stdout(f):
-        s0, s1 = play(
-            lambda a, b: mod_strategy(0, a, b),
-            lambda a, b: mod_strategy(1, a, b),
-            score0,
-            score1,
-            dice=mod_dice,
-            goal=goal,
-            say=say,
-        )
+    s0, s1 = play(
+        lambda a, b: mod_strategy(0, a, b),
+        lambda a, b: mod_strategy(1, a, b),
+        update,
+        score0,
+        score1,
+        dice=mod_dice,
+        goal=goal,
+    )
     return s0, s1, game_trace
 
 

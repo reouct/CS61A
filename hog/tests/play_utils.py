@@ -2,7 +2,7 @@ import random
 
 SUMMARY = "Start scores = ({s0}, {s1}).\nPlayer {w} rolls {nr} dice and gets outcomes {rv}.\nEnd scores = ({e0}, {e1})"
 
-def trace_play(play, strategy0, strategy1, score0, score1, dice, goal, say):
+def trace_play(play, strategy0, strategy1, update, score0, score1, dice, goal, say):
     """Wraps the user's play function and
         (1) ensures that strategy0 and strategy1 are called exactly once per turn
         (2) records the entire game, returning the result as a list of dictionaries,
@@ -42,11 +42,12 @@ def trace_play(play, strategy0, strategy1, score0, score1, dice, goal, say):
     s0, s1 = play(
         lambda a, b: mod_strategy(0, a, b),
         lambda a, b: mod_strategy(1, a, b),
+        update,
         score0,
         score1,
         dice=mod_dice,
         goal=goal,
-        say=safe(say),
+        #say=safe(say),
     )
     return s0, s1, game_trace
 
@@ -59,7 +60,7 @@ def safe(commentary):
         return leader, message
     return new_commentary
 
-def describe_game(hog, test_number, score0, score1, goal):
+def describe_game(hog, test_number, score0, score1, goal, update):
     strat_seed0, strat_seed1, dice_seed = run_with_seed(test_number, lambda: [random.randrange(2**32) for _ in range(3)])
     strategy0 = random_strat(strat_seed0)
     strategy1 = random_strat(strat_seed1)
@@ -68,11 +69,13 @@ def describe_game(hog, test_number, score0, score1, goal):
         hog.play,
         strategy0,
         strategy1,
+        update=update,
         score0=score0,
         score1=score1,
         dice=dice,
         goal=goal,
-        say=hog.silence)
+        say=None
+        )
 
     end_of_turn = [(turn["s0_start"], turn["s1_start"]) for turn in game_trace[1:]]
     end_of_turn.append((s0last, s1last))
