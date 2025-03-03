@@ -28,6 +28,7 @@ def roll_dice(num_rolls, dice=six_sided):
 
     while n > 0:
         dice_number = dice()
+        n -= 1
 
         if not _exit:
             if dice_number == 1:
@@ -40,8 +41,6 @@ def roll_dice(num_rolls, dice=six_sided):
     return score
 
     # END PROBLEM 1
-counted_dice = make_test_dice(4,1,2,6)
-roll_dice(3, counted_dice)
 
 
 def digit_fn(digit):
@@ -92,12 +91,22 @@ def hefty_hogs(player_score, opponent_score):
     opponent_score: The total score of the other player.
     """
     # BEGIN PROBLEM 2
-    "*** YOUR CODE HERE ***"
+    if opponent_score == 0:
+        return 1
+    else:
+        score = player_score
+        while opponent_score > 0:
+            digit = opponent_score % 10
+            score = digit_fn(digit)(score)
+            opponent_score //= 10
+
+        return score % 30
     # END PROBLEM 2
 
 
 def take_turn(num_rolls, player_score, opponent_score, dice=six_sided, goal=GOAL_SCORE):
-    """Simulate a turn rolling NUM_ROLLS dice,
+    """
+    Simulate a turn rolling NUM_ROLLS dice,
     which may be 0 in the case of a player using Hefty Hogs.
     Return the points scored for the turn by the current player.
 
@@ -114,6 +123,10 @@ def take_turn(num_rolls, player_score, opponent_score, dice=six_sided, goal=GOAL
     assert max(player_score, opponent_score) < goal, 'The game should be over.'
     # BEGIN PROBLEM 3
     "*** YOUR CODE HERE ***"
+    if num_rolls == 0:
+        hefty_hogs(player_score, opponent_score)
+    elif 0 < num_rolls <= 10:
+        roll_dice(num_rolls,dice)
     # END PROBLEM 3
 
 

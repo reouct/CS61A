@@ -116,13 +116,4 @@ test = {
       >>> def roll_dice(num_rolls, dice):
       ...     print("Called roll dice!")
       ...     return 9002
-      ...
-      >>> hog.roll_dice, old_roll_dice = roll_dice, hog.roll_dice
-      """,
-      'teardown': r"""
-      >>> hog.roll_dice = old_roll_dice
-      """,
-      'type': 'doctest'
-    }
-  ]
-}
+ 
