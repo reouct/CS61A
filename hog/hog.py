@@ -22,8 +22,19 @@ def roll_dice(num_rolls, dice=six_sided):
     assert num_rolls > 0, 'Must roll at least once.'
     # BEGIN PROBLEM 1
     "*** YOUR CODE HERE ***"
+    i = 0
+    score = 0
+    rolled_one = False
+    while i < num_rolls:
+        outcome = dice()
+        if outcome == 1:
+            rolled_one = True
+        score += outcome
+        i += 1
+    if rolled_one:
+        return 1
+    return score
     # END PROBLEM 1
-
 
 def boar_brawl(player_score, opponent_score):
     """Return the points scored by rolling 0 dice according to Boar Brawl.
@@ -34,6 +45,13 @@ def boar_brawl(player_score, opponent_score):
     """
     # BEGIN PROBLEM 2
     "*** YOUR CODE HERE ***"
+    last_digit_of_player_score = player_score % 10
+    one_digit_opponent_score = 0 if opponent_score < 10 else (opponent_score // 10) % 10
+
+    if 3 * abs(one_digit_opponent_score - last_digit_of_player_score) == 0:
+        return 1
+    else:
+        return 3 * abs(one_digit_opponent_score - last_digit_of_player_score)
     # END PROBLEM 2
 
 
@@ -52,6 +70,10 @@ def take_turn(num_rolls, player_score, opponent_score, dice=six_sided):
     assert num_rolls <= 10, 'Cannot roll more than 10 dice.'
     # BEGIN PROBLEM 3
     "*** YOUR CODE HERE ***"
+    if num_rolls == 0:
+        return boar_brawl(player_score, opponent_score)
+    else:
+        return roll_dice(num_rolls, dice)
     # END PROBLEM 3
 
 
@@ -77,12 +99,31 @@ def num_factors(n):
     """Return the number of factors of N, including 1 and N itself."""
     # BEGIN PROBLEM 4
     "*** YOUR CODE HERE ***"
+    if is_prime(n):
+        return 2
+    else:
+        factors = []
+        for i in range(1, n + 1):
+            if n % i == 0:
+                factors.append(i)
+        return len(factors)
     # END PROBLEM 4
+
+num_factors(21)
 
 def sus_points(score):
     """Return the new score of a player taking into account the Sus Fuss rule."""
     # BEGIN PROBLEM 4
     "*** YOUR CODE HERE ***"
+    if num_factors(score) == 3 or num_factors(score) == 4:
+        i = score
+        next_prime_number = 0
+        while not is_prime(i):
+            i += 1
+            next_prime_number = i
+        return next_prime_number
+    else:
+        return score
     # END PROBLEM 4
 
 def sus_update(num_rolls, player_score, opponent_score, dice=six_sided):
@@ -91,6 +132,12 @@ def sus_update(num_rolls, player_score, opponent_score, dice=six_sided):
     """
     # BEGIN PROBLEM 4
     "*** YOUR CODE HERE ***"
+    dice_outcome = roll_dice(num_rolls, dice) if num_rolls != 0 else boar_brawl(player_score, opponent_score)
+    new_score = player_score + dice_outcome
+    if num_factors(new_score) == 3 or num_factors(new_score) == 4:
+        return sus_points(new_score)
+    else:
+        return simple_update(num_rolls, player_score, opponent_score, dice)
     # END PROBLEM 4
 
 
