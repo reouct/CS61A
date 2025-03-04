@@ -109,8 +109,6 @@ def num_factors(n):
         return len(factors)
     # END PROBLEM 4
 
-num_factors(21)
-
 def sus_points(score):
     """Return the new score of a player taking into account the Sus Fuss rule."""
     # BEGIN PROBLEM 4
