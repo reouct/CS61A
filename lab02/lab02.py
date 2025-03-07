@@ -14,6 +14,12 @@ def composite_identity(f, g):
     False
     """
     "*** YOUR CODE HERE ***"
+    def check_if_equal(x):
+        if f(g(x)) == g(f(x)):
+            return True
+        else:
+            return False
+    return check_if_equal
 
 
 def sum_digits(y):
